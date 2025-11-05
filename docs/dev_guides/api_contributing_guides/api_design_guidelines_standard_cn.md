@@ -538,7 +538,7 @@
 | 级联 | coalesced | |
 | 数据并行 | data parallelism | |
 | 模型并行 | model parallelism | |
-| 异步随机梯度下降 | Asynchoronous Stochastic Gradient Descent | |
+| 异步随机梯度下降 | Asynchronous Stochastic Gradient Descent | |
 | 参数服务器 | parameter server | |
 | 模型压缩 | model compression | |
 | 动态结构 | dynamic structure | |
@@ -629,7 +629,7 @@
 | 最近邻回归 | nearest neighbor regression | |
 | 最近邻 | nearest neighbor | |
 | 验证集 | validation set | |
-| 基准 | bechmark | |
+| 基准 | benchmark | |
 | 基准 | baseline | |
 | 点估计 | point estimator | |
 | 估计量 | estimator | |

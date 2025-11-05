@@ -14,7 +14,7 @@ Layer
 ::::::::::::
 
     - **name_scope** (str，可选) - 为 Layer 内部参数命名而采用的名称前缀。如果前缀为“my_layer”，在一个类名为 MyLayer 的 Layer 中，参数名为“mylayer_0.w_n”，其中 w 是参数的名称，n 为自动生成的具有唯一性的后缀。如果为 None，前缀名将为小写的类名。默认值为 None。
-    - **dtype** (str 可选) - Layer 中参数数据类型。如果设置为 str，则可以是“bool”，“float16”，“float32”，“float64”，“int8”，“int16”，“int32”，“int64”，“uint8”或“uint16”。默认值为 "float32"。
+    - **dtype** (str|paddle.dtype|np.dtype，可选) - Layer 中参数数据类型。如果设置为 str，则可以是“bool”，“float16”，“float32”，“float64”，“int8”，“int16”，“int32”，“int64”，“uint8”或“uint16”。默认值为 "float32"。
 
 **返回**
 无
@@ -32,6 +32,9 @@ train()
 
 将此层及其所有子层设置为训练模式。这只会影响某些模块，如 Dropout 和 BatchNorm。
 
+**返回**
+Layer (返回网络层)， self (返回自身)
+
 **代码示例**
 
 COPY-FROM: paddle.nn.Layer
@@ -42,7 +45,7 @@ eval()
 将此层及其所有子层设置为预测模式。这只会影响某些模块，如 Dropout 和 BatchNorm。
 
 **返回**
-无
+Layer (返回网络层)， self (返回自身)
 
 **代码示例**
 
@@ -145,7 +148,7 @@ create_variable(name=None, persistable=None, dtype=None)
 
     - **name** (str，可选) - 具体用法请参见 :ref:`api_guide_Name`，一般无需设置，默认值为 None。
     - **persistable** (bool，可选) - 是否为持久性变量，后续会被移出。默认值：None。
-    - **dtype** (str，可选) - Layer 中参数数据类型。如果设置为 str，则可以是“bool”，“float16”，“float32”，“float64”，“int8”，“int16”，“int32”，“int64”，“uint8”或“uint16”。默认值为 "float32" 。
+    - **dtype** (str|paddle.dtype|np.dtype，可选) - Layer 中参数数据类型。如果设置为 str，则可以是“bool”，“float16”，“float32”，“float64”，“int8”，“int16”，“int32”，“int64”，“uint8”或“uint16”。默认值为 "float32" 。
 
 **返回**
 Tensor，返回创建的 ``Tensor``
@@ -163,7 +166,7 @@ create_tensor(name=None, persistable=None, dtype=None)
 
     - **name** (str，可选) - 具体用法请参见 :ref:`api_guide_Name`，一般无需设置，默认值为 None。
     - **persistable** (bool，可选) - 是否为持久性变量，后续会被移出。默认值：None。
-    - **dtype** (str，可选) - Layer 中参数数据类型。如果设置为 str，则可以是“bool”，“float16”，“float32”，“float64”，“int8”，“int16”，“int32”，“int64”，“uint8”或“uint16”。默认值为 "float32" 。
+    - **dtype** (str|paddle.dtype|np.dtype，可选) - Layer 中参数数据类型。如果设置为 str，则可以是“bool”，“float16”，“float32”，“float64”，“int8”，“int16”，“int32”，“int64”，“uint8”或“uint16”。默认值为 "float32" 。
 
 **返回**
 Tensor，返回创建的 ``Tensor``
@@ -431,7 +434,7 @@ to(device=None, dtype=None, blocking=None)
 **参数**
 
     - **device** （str|paddle.CPUPlace()|paddle.CUDAPlace()|paddle.CUDAPinnedPlace()|paddle.XPUPlace()|None，可选) - 希望存储 Layer 的设备位置。如果为 None，设备位置和原始的 Tensor 的设备位置一致。如果设备位置是 string 类型，取值可为 ``cpu``, ``gpu:x`` and ``xpu:x``，这里的 ``x`` 是 GPUs 或者 XPUs 的编号。默认值：None。
-    - **dtype** （str|numpy.dtype|paddle.dtype|None，可选) - 数据的类型。如果为 None，数据类型和原始的 Tensor 一致。默认值：None。
+    - **dtype** (str|paddle.dtype|np.dtype，可选)- 数据的类型。如果为 None，数据类型和原始的 Tensor 一致。默认值：None。
     - **blocking** （bool|None，可选）- 如果为 False 并且当前 Tensor 处于固定内存上，将会发生主机到设备端的异步拷贝。否则，会发生同步拷贝。如果为 None，blocking 会被设置为 True。默认为 False。
 
 **代码示例**
@@ -444,7 +447,7 @@ astype(dtype=None)
 
 **参数**
 
-    - **dtype** (str | paddle.dtype | numpy.dtype) - 转换后的 dtype，str 类型支持"bool", "bfloat16", "float16", "float32", "float64", "int8", "int16", "int32", "int64", "uint8", "complex64", "complex128"。
+    - **dtype** (str|paddle.dtype|np.dtype，可选)- 转换后的 dtype，str 类型支持"bool", "bfloat16", "float16", "float32", "float64", "int8", "int16", "int32", "int64", "uint8", "complex64", "complex128"。
 
 返回：类型转换后的 Layer
 

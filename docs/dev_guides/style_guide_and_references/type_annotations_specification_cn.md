@@ -73,12 +73,14 @@ class User:
 - 消除导入模块时类型提示的计算开销
 - 在类型注解上下文中，在低版本 Python 使用部分高版本才能使用的特性（如 [PEP 585](https://peps.python.org/pep-0585/) 标准集合类型、[PEP 604](https://peps.python.org/pep-0604/) 简化的 Union type 写法 `X | Y` 等），使代码更加现代化，并降低跨版本兼容成本。
 
-比如在考虑 Python 3.8 兼容性的考虑下，如果不使用 PEP 563，则需要编写如下代码：
+比如在考虑 Python 3.9 兼容性的考虑下，如果不使用 PEP 563，则需要编写如下代码：
 
 ```python
-from typing import List, Union, Sequence
+from typing import Union
 
-def search(user: "User", keywords: Sequence[str]) -> Union[List[str], None]:
+from collections.abc import Sequence
+
+def search(user: "User", keywords: Sequence[str]) -> Union[list[str], None]:
     ...
 
 class User: ...
@@ -112,12 +114,10 @@ from typing import Literal
 
 from typing_extensions import TypeAlias
 
-IntOrStr: TypeAlias = int | str  # 不生效，3.8 仍然会报错
-
-class SequenceInt(Sequence[int]): ...  # 不生效，3.8 仍然会报错
+IntOrStr: TypeAlias = int | str  # 不生效，3.9 仍然会报错
 ```
 
-对于此类情况，我们仍然需要使用 Python 3.8 兼容的形式，如：
+对于此类情况，我们仍然需要使用 Python 3.9 兼容的形式，如：
 
 ```python
 from __future__ import annotations
@@ -127,8 +127,6 @@ from typing import Literal, Union, Sequence
 from typing_extensions import TypeAlias
 
 IntOrStr: TypeAlias = Union[int, str]
-
-class SequenceInt(Sequence[int]): ...
 ```
 
 > 后续示例代码默认使用 PEP 563，不再重复说明。
@@ -141,7 +139,7 @@ Python 的类型标注体系是不断发展的，新的类型和特性会不断�
 
 当然，如果一个类型已经存在于所支持的最低 Python 版本 `typing` 模块中，那么建议直接从 `typing` 模块导入而不是 `typing_extensions` 中导入。
 
-比如 Paddle 目前最低支持的 Python 版本为 3.8，比如 `Literal` 是 3.8 引入的类型，因此我们应该直接从 `typing` 模块导入而不是 `typing_extensions` 中导入；而 `TypeGuard` 是 3.10 引入的类型，因此我们应该从 `typing_extensions` 中导入。
+比如 Paddle 目前最低支持的 Python 版本为 3.9，其中 `Literal` 是 3.8 引入的类型，因此我们应该直接从 `typing` 模块导入而不是 `typing_extensions` 中导入；而 `TypeGuard` 是 3.10 引入的类型，因此我们应该从 `typing_extensions` 中导入。
 
 ``` python
 from typing import Literal                  # Python 3.8 typing 模块中已经包含
@@ -178,7 +176,7 @@ if TYPE_CHECKING:
     from paddle import Tensor
 
 # TensorLike 定义如下
-# TensorLike: TypeAlias = Union[npt.NDArray[Any], "Tensor", Numberic]
+# TensorLike: TypeAlias = Union[npt.NDArray[Any], "Tensor", Numeric]
 
 def add(a: Tensor, b: TensorLike) -> Tensor:
     if isinstance(b, np.ndarray):
@@ -186,10 +184,10 @@ def add(a: Tensor, b: TensorLike) -> Tensor:
     elif isinstance(b, paddle.Tensor):
         return dispatch_paddle_add(a, b)
     else:
-        return dispatch_numberic_add(a, b)
+        return dispatch_numeric_add(a, b)
 ```
 
-这里 `TensorLike` 是一个通用类型，包含了 `np.ndarray`、`paddle.Tensor`、`Numberic` 三种类型，因此在实现中也应该考虑到这三种类型的输入。
+这里 `TensorLike` 是一个通用类型，包含了 `np.ndarray`、`paddle.Tensor`、`Numeric` 三种类型，因此在实现中也应该考虑到这三种类型的输入。
 
 ### 使用更加明确的类型以提供更好的提示效果
 
@@ -258,7 +256,7 @@ def filter_user(user: list[User], type: UserType) -> list[User]: ...
 
 ### 参数应尽可能使用抽象类型，返回值应尽可能使用具体类型
 
-对于函数输入参数，如果允许，我们应该尽可能使用 [Protocal](https://docs.python.org/3/library/typing.html#typing.Protocol)，如 [Sequence](https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence)、[Mapping](https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping) 、[Iterable](https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable) 等抽象类型，以提高函数的通用性。而对于函数返回值，我们应该尽可能使用具体类型，以确保下游使用时能得到更好的提示效果。
+对于函数输入参数，如果允许，我们应该尽可能使用 [Protocol](https://docs.python.org/3/library/typing.html#typing.Protocol)，如 [Sequence](https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence)、[Mapping](https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping) 、[Iterable](https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable) 等抽象类型，以提高函数的通用性。而对于函数返回值，我们应该尽可能使用具体类型，以确保下游使用时能得到更好的提示效果。
 
 比如相比于如下写法：
 

@@ -49,7 +49,7 @@ It's not enough to only have some basic strategies. The pre-requisite of memory 
 
 In our design, the neural network topology is defined as a program. Luckily, [live variable analysis](https://en.wikipedia.org/wiki/Live_variable_analysis) is a classic problem in compilers which can be used in many stages, such as register allocation.
 
-In compilers, the front end of the compiler translates programs into an intermediate language with an unbounded number of temporary variables. This program must run on a machine with a bounded number of registers. Two temporary variables a and b can fit into the same register, if a and b are never "in use" at the same time. Thus, many temporary variables can fit in few registers; if they don't all fit, the excess tempory variables can be kept in memory.
+In compilers, the front end of the compiler translates programs into an intermediate language with an unbounded number of temporary variables. This program must run on a machine with a bounded number of registers. Two temporary variables a and b can fit into the same register, if a and b are never "in use" at the same time. Thus, many temporary variables can fit in few registers; if they don't all fit, the excess temporary variables can be kept in memory.
 
 Therefore, the compiler needs to analyze the intermediate-representation program to determine which temporary variables are in use at the same time. We say a variable is "live" if it holds a value that may be needed in the future, so this analysis is called liveness analysis.
 
@@ -60,7 +60,7 @@ We can leran these techniques from compilers. There are mainly two stages to mak
 
 
 #### Control Flow Graph
-To perform analysis on a program, it is often useful to make a control flow graph. A [control flow graph](https://en.wikipedia.org/wiki/Control_flow_graph) (CFG) in computer science is a representation, using graph notation, of all paths that might be traversed through a program during its execution. Each statement in the program is a node in the flow graph; if statemment x can be followed by statement y, there is an egde from x to y.
+To perform analysis on a program, it is often useful to make a control flow graph. A [control flow graph](https://en.wikipedia.org/wiki/Control_flow_graph) (CFG) in computer science is a representation, using graph notation, of all paths that might be traversed through a program during its execution. Each statement in the program is a node in the flow graph; if statemment x can be followed by statement y, there is an edge from x to y.
 
 Following is the flow graph for a simple loop.
 
@@ -79,7 +79,7 @@ In former control flow graph, the out-edges of node 5 are 5 --> 6 and 5 --> 2, a
 
 - Uses and Defs
 
-An assignmemt to a variable or temporary defines that variable. An occurence of a variable on the right-hand side of an assginment(or in other expressions) uses the variable. We can define the *def* of a variable as the set of graph nodes that define it; or the *def* of a graph node as the set of variables that it defines; and the similarly for the *use* of a variable or graph node. In former control flow graph, *def(3)* = {c}, *use(3)* = {b, c}.
+An assignmemt to a variable or temporary defines that variable. An occurence of a variable on the right-hand side of an assignment(or in other expressions) uses the variable. We can define the *def* of a variable as the set of graph nodes that define it; or the *def* of a graph node as the set of variables that it defines; and the similarly for the *use* of a variable or graph node. In former control flow graph, *def(3)* = {c}, *use(3)* = {b, c}.
 
 - Liveness
 
@@ -99,7 +99,7 @@ At last, we take basic strategy and liveness analysis techniques learning from c
 In-place is a built-in attribute of an operator. Since we treat in-place and other operators differently, we have to add an in-place attribute for every operator.
 
 
-#### contruct control flow graph
+#### construct control flow graph
 
 Following is the ProgramDesc protobuf of [machine translation](https://github.com/PaddlePaddle/Paddle/blob/develop/python/paddle/fluid/tests/book/test_machine_translation.py) example.
 

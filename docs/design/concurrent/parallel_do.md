@@ -80,7 +80,7 @@ block1 { # the forward pass
 }
 block2 { # the backward pass
   parent_block: 1
-  vars: data_grad, h1_grad, h2_grad, loss_gard, local_w1_grad, local_w2_grad
+  vars: data_grad, h1_grad, h2_grad, loss_grad, local_w1_grad, local_w2_grad
   ops: softmax_grad,
        fc_grad
        fc_grad
@@ -88,7 +88,7 @@ block2 { # the backward pass
 }
 ```
 
-## Performance Imporvement
+## Performance Improvement
 
 There are serial places we can make this parallel_do faster.
 
@@ -113,7 +113,7 @@ We can avoid this step by making each device have a copy of the parameter. This 
 1. In the backward, allreduce param@grad at different devices, this requires
     1. `backward.py` add `allreduce` operators at parallel_do_grad
     1. `allreduce` operators need to be called in async mode to achieve maximum throughput
-1. apply gradients related op(i.e. cliping, normalization, decay, sgd) on different devices in parallel
+1. apply gradients related op(i.e. clipping, normalization, decay, sgd) on different devices in parallel
 
 By doing so, we also avoided "backward: accumulate param@grad from different devices to the first device".
 And the ProgramDesc looks like the following
@@ -148,7 +148,7 @@ block1 {
 }
 block2 {
   parent_block: 1
-  vars: data_grad, h1_grad, h2_grad, loss_gard, w1_grad, w2_grad
+  vars: data_grad, h1_grad, h2_grad, loss_grad, w1_grad, w2_grad
   ops: softmax_grad,
        fc_grad, allreduce(places, scopes, w1_grad),
        fc_grad, allreduce(places, scopes, w2_grad)

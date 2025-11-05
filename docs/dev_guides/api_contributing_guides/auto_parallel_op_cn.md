@@ -19,7 +19,7 @@
     <img src="https://raw.githubusercontent.com/PaddlePaddle/docs/develop/docs/dev_guides/api_contributing_guides/images/process_mesh_2-2.png" width="50%"/>
 </p>
 
-我们可以使用 DimsMapping 来表示数据在 ProcessMesh 上的分布方式，DimsMapping[i] = j 表示张量的第 i 维在 ProcessMesh 的第 j 维上被切分，若 j 为 -1 则表示不切分，在该维上复制。例如张量大小为 (4, 4)，process_mesh 的大小为 [2, 2]，DimsMapping = [-1, 1] 表示张量的第 0 维不切分，第 1 维在 ProcessMesh 的第 1 维上切分，切分后每个卡上的张量大小为 (2, 1)，等价于 Placements 表示的 [Replicate(), Shard(1)]。DimsMapping = [0, 1] 表示张量的第 0 维在 ProcessMesh 的第 0 维上切分，第 1 维在 ProcessMesh 的第 1 维上切分，切分后每个卡上的张量大小为 (1, 1)，等价于 Placements 表示的 [Shard(0), Shard(1)]。下图分别展示了 DimsMapping 为 [-1, 1] 和 [0, 1] 时的张量切分情况。
+我们可以使用 DimsMapping 来表示数据在 ProcessMesh 上的分布方式，DimsMapping[i] = j 表示张量的第 i 维在 ProcessMesh 的第 j 维上被切分，若 j 为 -1 则表示不切分，在该维上复制。例如张量大小为 (2, 2)，process_mesh 的大小为 [2, 2]，DimsMapping = [-1, 1] 表示张量的第 0 维不切分，第 1 维在 ProcessMesh 的第 1 维上切分，切分后每个卡上的张量大小为 (2, 1)，等价于 Placements 表示的 [Replicate(), Shard(1)]。DimsMapping = [0, 1] 表示张量的第 0 维在 ProcessMesh 的第 0 维上切分，第 1 维在 ProcessMesh 的第 1 维上切分，切分后每个卡上的张量大小为 (1, 1)，等价于 Placements 表示的 [Shard(0), Shard(1)]。下图分别展示了 DimsMapping 为 [-1, 1] 和 [0, 1] 时的张量切分情况。
 
 <p align="center">
     <img src="https://raw.githubusercontent.com/PaddlePaddle/docs/develop/docs/dev_guides/api_contributing_guides/images/DimMapping.png" width="70%"/>
@@ -107,7 +107,7 @@ SpmdInfo ElementwiseBinaryInferSpmd(const DistMetaTensor& x,
   std::string x_axes, y_axes, out_axes;
   GetBinaryNotations(x_shape, y_shape, &x_axes, &y_axes, &out_axes);
 
-  // Step2: Sharding Propogation
+  // Step2: Sharding Propagation
   // Step2.1: 合并输入的 dims mapping，得到每一维度对应的 dims mapping 值。
   // 调用 ShardingMergeForTensors 可以对输入 dims mapping 进行合并，返回的 map 即为
   // 每一维度对应的 dims mapping 值。
@@ -325,13 +325,13 @@ class TestElementwiseSPMDRule(unittest.TestCase):
         result_dist_attrs = self.binary_rule.infer_forward(
             self.x_dist_tensor_spec, self.y_dist_tensor_spec
         )
-        infered_input_dist_attrs = result_dist_attrs[0] # 推导得到的 input dims mapping
-        infered_output_dist_attrs = result_dist_attrs[1] # 推导得到的 output dims mapping
+        inferred_input_dist_attrs = result_dist_attrs[0] # 推导得到的 input dims mapping
+        inferred_output_dist_attrs = result_dist_attrs[1] # 推导得到的 output dims mapping
 
         # 检查结果是否正确
-        self.assertEqual(infered_input_dist_attrs[0].dims_mapping, [0, -1])
-        self.assertEqual(infered_input_dist_attrs[1].dims_mapping, [0, -1])
-        self.assertEqual(infered_output_dist_attrs[0].dims_mapping, [0, -1])
+        self.assertEqual(inferred_input_dist_attrs[0].dims_mapping, [0, -1])
+        self.assertEqual(inferred_input_dist_attrs[1].dims_mapping, [0, -1])
+        self.assertEqual(inferred_output_dist_attrs[0].dims_mapping, [0, -1])
 
     # 逆向推导单测
     def test_backward_multi_mesh_dim(self):
@@ -351,16 +351,16 @@ class TestElementwiseSPMDRule(unittest.TestCase):
             self.y_dist_tensor_spec,
             self.out_dist_tensor_spec,
         )
-        infered_input_dist_attrs = resulted_dist_attrs[0]
-        infered_output_dist_attrs = resulted_dist_attrs[1]
+        inferred_input_dist_attrs = resulted_dist_attrs[0]
+        inferred_output_dist_attrs = resulted_dist_attrs[1]
 
         self.assertEqual(len(resulted_dist_attrs), 2)
-        self.assertEqual(len(infered_input_dist_attrs), 2)
-        self.assertEqual(len(infered_output_dist_attrs), 1)
+        self.assertEqual(len(inferred_input_dist_attrs), 2)
+        self.assertEqual(len(inferred_output_dist_attrs), 1)
 
-        self.assertEqual(infered_input_dist_attrs[0].dims_mapping, [0, 1, -1])
-        self.assertEqual(infered_input_dist_attrs[1].dims_mapping, [0, 1, -1])
-        self.assertEqual(infered_output_dist_attrs[0].dims_mapping, [0, 1, -1])
+        self.assertEqual(inferred_input_dist_attrs[0].dims_mapping, [0, 1, -1])
+        self.assertEqual(inferred_input_dist_attrs[1].dims_mapping, [0, 1, -1])
+        self.assertEqual(inferred_output_dist_attrs[0].dims_mapping, [0, 1, -1])
 ```
 
 ## 三、自定义算子

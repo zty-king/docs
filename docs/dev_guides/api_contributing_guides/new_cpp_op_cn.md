@@ -193,6 +193,18 @@ Python API 到算子 InferMeta 函数和 Kernel 调用之间的框架调度部�
 a. 如果是复用已有算子，需要被复用的算子为前向算子且两者的返回值类型相同，可参考 zeros_like 算子<br>
 b. 如果是实现自定义的 C++ API，需要在'paddle/phi/api/lib/api_custom_impl.h'声明自定义实现函数并在'paddle/phi/api/lib/api_custom_impl.cc'中进行实现，具体可参考 embedding 算子</td>
 </tr>
+<tr>
+<td>data_transform</td>
+<td>控制算子输入参数的自动转换行为，包括类型（dtype）、设备（backend）和布局（layout），设备和布局的转换由全局 flag 控制，默认开启</td>
+</tr>
+<tr>
+<td>data_transform:skip_transform</td>
+<td>跳过指定参数的所有数据转换（最高优先级），设置后将禁用该参数所有类型（dtype）、设备（backend）和布局（layout）的自动转换</td>
+</tr>
+<tr>
+<td>data_transform:support_trans_dtype</td>
+<td>开启指定参数的自动类型转换，设置后会对非复数类型也进行自动类型转换（复数类型默认总是转换，除非在 skip_transform 配置中指定）</td>
+</tr>
 </tbody>
 </table>
 
@@ -236,6 +248,10 @@ b. 如果是实现自定义的 C++ API，需要在'paddle/phi/api/lib/api_custom
 <tr>
 <td>backward</td>
 <td>反向算子对应的更高阶反向算子名称，如一阶反向算子的反向为二阶反向算子</td>
+</tr>
+<tr>
+<td>data_transform</td>
+<td>与前向配置规则相同</td>
 </tr>
 <tr>
 <td colspan="2" style="text-align: center;"><b>特殊配置项（目前特殊配置项还处于不稳定阶段，后续可能会有调整更新）</b></td>
@@ -940,7 +956,7 @@ class TestTraceOp(OpTest):
     - 第二个参数`'Out'` : 指定前向网络最终的输出目标变量`Out`。
     - 第三个参数`check_pir` : `check_pir=True` 表示开启 PIR 模式单测（默认为 `False`，需手动开启），`check_dygraph` 默认为 `True`, 表示默认开启动态图单测。
   - 对于存在多个输入的反向算子测试，需要指定只计算部分输入梯度的 case
-    - 例如，[test_elementwise_sub_op.py](https://github.com/PaddlePaddle/Paddle/tree/develop/test/legacy_test/test_elementwise_sub_op.py) 中的 `test_check_grad_ignore_x` 和 `test_check_grad_ingore_y`分支用来测试只需要计算一个输入梯度的情况
+    - 例如，[test_elementwise_sub_op.py](https://github.com/PaddlePaddle/Paddle/tree/develop/test/legacy_test/test_elementwise_sub_op.py) 中的 `test_check_grad_ignore_x` 和 `test_check_grad_ignore_y`分支用来测试只需要计算一个输入梯度的情况
     - 此处第三个参数 `max_relative_error` ：指定检测梯度时能容忍的最大相对误差值。
 
   ```python
@@ -974,7 +990,7 @@ class TestTraceOp(OpTest):
 
 Python API 也需要编写相关的单测进行测试，详见 [开发 API Python 端](new_python_api_cn.html)。
 
-其他有关单元测试添加的注意事项请参考 [Op 开发手册](https://github.com/PaddlePaddle/Paddle/wiki/Operator-Development-Manual-Index) 及 [API 单测开发及验收规范](api_accpetance_criteria_cn.html)。
+其他有关单元测试添加的注意事项请参考 [Op 开发手册](https://github.com/PaddlePaddle/Paddle/wiki/Operator-Development-Manual-Index) 及 [API 单测开发及验收规范](api_acceptance_criteria_cn.html)。
 
 ### 6.3 运行单元测试
 
